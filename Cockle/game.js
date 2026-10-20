@@ -14,6 +14,7 @@ fetch("words.txt")
     });
 
 
+
 function game(){
 
 
@@ -30,10 +31,29 @@ function game(){
     let gameField = document.getElementById("gameField");
     let infoField = document.getElementById("info");
 
+    function addPhrase(phrase){
+        let container = document.createElement("div");
+        container.className = "wordcontainer";
+        for (i=0; i<4; i++){
+            let el = document.createElement("div");
+            el.textContent=phrase[i];
 
-    let newWord = document.createElement("li");
-    newWord.textContent=startingWord;
-    gameField.append(newWord);
+            if (phrase[i] == "COCK"[i]){
+                el.className = "boxCorrect";
+            }else{
+                el.className = "box";
+                console.log(phrase);
+                console.log(phrase[i]);
+                console.log("cock"[i]);
+            }
+
+            container.append(el);
+            
+        }
+        gameField.append(container);
+    }
+
+    addPhrase(startingWord);
 
     function submitGuess(){
         
@@ -72,9 +92,7 @@ function game(){
             }
         }
         
-        let newWord = document.createElement("li");
-        newWord.textContent=guess.toUpperCase();
-        gameField.append(newWord);
+        addPhrase(guess.toUpperCase());
 
         lastGuess = guess;
         console.log(lastGuess);
@@ -83,6 +101,8 @@ function game(){
             infoField.textContent = "You won!"
             won = true;
         }
+
+        inputField.value="";
     }
 
 
