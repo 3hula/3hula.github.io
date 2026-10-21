@@ -103,8 +103,10 @@ function game(data){
         }
 
         if (!(validWordsSet.has(guess.toLowerCase()))){
-            info.textContent="Must be a valid word!"
-            return
+            if (!(guess.toUpperCase() == "COCK")){
+                info.textContent="Must be a valid word!"
+                return
+            }
         }
 
         //Check that new word differs by only 1
