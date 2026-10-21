@@ -10,18 +10,39 @@ fetch("words.txt")
     .then(function(data){
         validWords = data.split("\r\n");
         validWordsSet = new Set(validWords);
-        game();
+
+        //Check if user already won today's game
+        const lastGame = localStorage.getItem("gameWon");
+        const lastGameSaveData = JSON.parse(lastGame);
+
+        game(lastGameSaveData);
+
+
     });
 
 
 
-function game(){
+function game(data){
 
 
     let won = false;
-    let choice = Math.floor(Math.random() * 2251)
-    console.log(choice);
+    let tries = 0;
+    let gameArray = [];
+    let guesses = [];
+
+    //Calculate Time passage
+    const constantDate = Date.UTC(2026, 2, 1);
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+    const todayUTC = Date.UTC(year, month, date);
+    const elapsedTime = (todayUTC - constantDate) / 86400000;
+    
+    let choice = elapsedTime % 7186;
+
     let startingWord = validWords[choice -1]
+    startingWord = startingWord.toUpperCase();
     let lastGuess = startingWord;
 
 
@@ -31,7 +52,12 @@ function game(){
     let gameField = document.getElementById("gameField");
     let infoField = document.getElementById("info");
 
+    
+
+
+
     function addPhrase(phrase){
+        let row = [];
         let container = document.createElement("div");
         container.className = "wordcontainer";
         for (i=0; i<4; i++){
@@ -40,22 +66,25 @@ function game(){
 
             if (phrase[i] == "COCK"[i]){
                 el.className = "boxCorrect";
+                row.push('🟩');
             }else{
                 el.className = "box";
-                console.log(phrase);
-                console.log(phrase[i]);
-                console.log("cock"[i]);
+                row.push('⬛');
             }
 
             container.append(el);
             
         }
         gameField.append(container);
+        gameArray.push(row.join(""));
+   
     }
 
     addPhrase(startingWord);
 
     function submitGuess(){
+
+        
         
         if (won == true){
             return
@@ -73,7 +102,7 @@ function game(){
             return
         }
 
-        if (!(validWordsSet.has(guess.toUpperCase()))){
+        if (!(validWordsSet.has(guess.toLowerCase()))){
             info.textContent="Must be a valid word!"
             return
         }
@@ -93,16 +122,43 @@ function game(){
         }
         
         addPhrase(guess.toUpperCase());
+        guesses.push(guess.toUpperCase());
 
         lastGuess = guess;
-        console.log(lastGuess);
+
+        tries+=1;
 
         if (guess.toLowerCase() == "cock"){
             infoField.textContent = "You won!"
             won = true;
+
+            //Copy to clipbaord fucntion
+            function copyToClipboard(text){
+                navigator.clipboard.writeText(text);
+            };
+
+            //add button to copy score
+            let copyButton = document.createElement("button");
+            copyButton.onclick = () => {
+                copyToClipboard("Won in " + tries + "\n\n" + gameArray.join("\n") + "\n\n" +  "Play Cockle at https://3hula.github.io/Cockle/")}; 
+            copyButton.textContent = "Copy Result";
+            document.body.append(copyButton);
+
+            //Save to localstorage
+
+            const saveData = {
+                seed: elapsedTime,
+                tries: tries,
+                guesses: guesses
+
+            };
+            localStorage.setItem("gameWon", JSON.stringify(saveData));
         }
 
         inputField.value="";
+        
+
+        
     }
 
 
@@ -112,7 +168,33 @@ function game(){
         submitGuess();
     })
 
-    
+    if(data){
+        if (data.seed == elapsedTime){
+            infoField.textContent = "You won!"
+            won = true;
+
+            //Copy to clipbaord fucntion
+            function copyToClipboard(text){
+                navigator.clipboard.writeText(text);
+            };
+
+            //add button to copy score
+            let copyButton = document.createElement("button");
+            copyButton.onclick = () => {
+                copyToClipboard("Won in " + data.tries + "\n\n" + gameArray.join("\n") + "\n\n" +  "Play Cockle at https://3hula.github.io/Cockle/")}; 
+            copyButton.textContent = "Copy Result";
+            document.body.append(copyButton);
+
+            for(let i=0; i<data.tries+1 ;i++){
+                
+                addPhrase(data.guesses[i]);
+            }
+
+
+            return
+        }
+
+    }
     
 
 
