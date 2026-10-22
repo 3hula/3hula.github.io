@@ -162,17 +162,21 @@ function game(data){
 
             //Save to localstorage only if it hasnt been saved already!
             
+            let playedTodayBool = false;
             if(data){
-                if (!(data.seed == elapsedTime)){
-                    const saveData = {
+                if (data.seed == elapsedTime){
+                    playedTodayBool = true;
+                }
+            }
+
+            if(!playedTodayBool){
+                const saveData = {
                         seed: elapsedTime,
                         tries: tries,
                         guesses: guesses
         
                     };
                     localStorage.setItem("gameWon", JSON.stringify(saveData));
-
-                }
             }
         }
 
