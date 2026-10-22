@@ -1,4 +1,16 @@
-console.log("Running");
+function mulberry32(a) {
+    return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+
+
+
+
 
 //fetch dictionary data 
 let validWords;
@@ -39,9 +51,11 @@ function game(data){
     const todayUTC = Date.UTC(year, month, date);
     const elapsedTime = (todayUTC - constantDate) / 86400000;
     
-    let choice = elapsedTime % 7186;
 
-    let startingWord = validWords[choice -1]
+    const random = mulberry32(elapsedTime);
+    const randomResult = Math.floor(random() * 7185);
+
+    let startingWord = validWords[randomResult]
     startingWord = startingWord.toUpperCase();
     let lastGuess = startingWord;
 
