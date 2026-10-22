@@ -26,7 +26,7 @@ fetch("words.txt")
         //Check if user already won today's game
         const lastGame = localStorage.getItem("gameWon");
         const lastGameSaveData = JSON.parse(lastGame);
-
+ 
         game(lastGameSaveData);
 
 
@@ -160,15 +160,20 @@ function game(data){
             copyButton.textContent = "Copy Result";
             document.body.append(copyButton);
 
-            //Save to localstorage
+            //Save to localstorage only if it hasnt been saved already!
+            
+            if(data){
+                if (!(data.seed == elapsedTime)){
+                    const saveData = {
+                        seed: elapsedTime,
+                        tries: tries,
+                        guesses: guesses
+        
+                    };
+                    localStorage.setItem("gameWon", JSON.stringify(saveData));
 
-            const saveData = {
-                seed: elapsedTime,
-                tries: tries,
-                guesses: guesses
-
-            };
-            localStorage.setItem("gameWon", JSON.stringify(saveData));
+                }
+            }
         }
 
         inputField.value="";
