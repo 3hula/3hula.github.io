@@ -20,7 +20,7 @@ fetch("words.txt")
         return response.text();
     })
     .then(function(data){
-        validWords = data.split("\r\n");
+        validWords = data.split("\n");
         validWordsSet = new Set(validWords);
 
         //Check if user already won today's game
