@@ -9,6 +9,9 @@ function mulberry32(a) {
 
 
 
+let input = [];
+
+
 
 
 
@@ -21,6 +24,7 @@ fetch("words.txt")
     })
     .then(function(data){
         validWords = data.split("\n");
+        
         validWordsSet = new Set(validWords);
 
         //Check if user already won today's game
@@ -96,7 +100,7 @@ function game(data){
 
     addPhrase(startingWord);
 
-    function submitGuess(){
+    function submitGuess(guess){
 
         
         
@@ -105,7 +109,6 @@ function game(data){
         }
 
         info.textContent="";
-        let guess = inputField.value;
         if (!(typeof(guess) == "string")){
             info.textContent="Guess must be a string!"
             return
@@ -147,6 +150,9 @@ function game(data){
         if (guess.toLowerCase() == "cock"){
             infoField.textContent = "You won!"
             won = true;
+
+            //Remove input row
+            document.getElementById("input_container").remove();
 
             //Copy to clipbaord fucntion
             function copyToClipboard(text){
@@ -190,7 +196,7 @@ function game(data){
     let inputForm = document.getElementById("inputForm");
     inputForm.addEventListener('submit', function(event){
         event.preventDefault();
-        submitGuess();
+        submitGuess(inputField.value);
     })
 
     if(data){
@@ -198,10 +204,15 @@ function game(data){
             infoField.textContent = "You won!"
             won = true;
 
+            
+
             //Copy to clipbaord fucntion
             function copyToClipboard(text){
                 navigator.clipboard.writeText(text);
             };
+
+            //Remove input row
+            document.getElementById("input_container").remove();
 
             //add button to copy score
             let copyButton = document.createElement("button");
@@ -222,5 +233,34 @@ function game(data){
     }
     
 
+    //Set up keys events
+    const keys = document.getElementsByClassName("key");
+
+    for (i=0; i< keys.length; i++){
+        keys[i].addEventListener("click", function() {
+            if (this.dataset.key == "DEL" && input.length > 0){
+                console.log(document.getElementById("input_container").children, input.length);
+                document.getElementById("input_container").children[input.length -1].textContent = "";
+                input.pop();
+            }
+            else if (this.dataset.key == "ENTER"){
+                console.log(input.join(""));
+                submitGuess(input.join(""));
+                input = [];
+
+                for (i = 0; i<4; i++){
+                    document.getElementById("input_container").children[i].textContent = "";
+                };
+            }
+            else if (input.length < 4 && this.dataset.key.length == 1){
+                document.getElementById("input_container").children[input.length].textContent = this.dataset.key;
+                input.push(this.dataset.key);
+            }
+        });
+
+    }
+
+
 
 };
+
