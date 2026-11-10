@@ -51,3 +51,41 @@ body{
 
     background-color: #538D4E;
 }
+
+
+
+
+/* Keyboard styling */
+.keyboard-container {
+    display:flex;
+    flex-direction: column;
+    gap:5px;
+}
+.keyboard-row {
+    display:flex;
+    gap:4px;
+}
+
+.key {
+    background-color: #818384;
+    border:0;
+    border-radius: 4px;
+    height: 58px;
+    width: 40px;
+    
+    font-size: 1.25em;
+   
+    color:white;
+    font-weight: 600;
+    cursor:pointer;
+    
+}
+
+.enter-key {
+    width:60px;
+    font-size:0.75em;
+}
+.del-key {
+    width:60px;
+    font-size:1em;
+}
